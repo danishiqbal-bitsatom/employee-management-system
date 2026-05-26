@@ -1,0 +1,11 @@
+<div class="container mt-4">
+<h2 class="mb-4">Edit Employee  <%= @employee_detail.name %></h2>
+<%= form_with(model: @employee_detail, local: true) do |f| %>
+<div class="card shadow-sm p-4">
+  <%= render 'form', employee: @employee_detail , f:f %>
+
+<% end %>
+
+</div>
+
+</div>

@@ -1,0 +1,8 @@
+<%= form_with model: @department do |f| %>
+  <div class="mb-3">
+    <%= f.label :name, class: "form-label fw-semibold" %>
+    <%= f.text_field :name, class: "form-control" %>
+  </div>
+  <%= f.submit class: "btn btn-primary" %>
+  <%= link_to "Cancel", departments_path, class: "btn btn-secondary" %>
+<% end %>

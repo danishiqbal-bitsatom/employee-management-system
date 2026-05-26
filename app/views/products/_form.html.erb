@@ -1,0 +1,25 @@
+<% if product.errors.any? %>
+  <div class="alert alert-danger">
+    <% product.errors.full_messages.each do |msg| %>
+      <p><%= msg %></p>
+    <% end %>
+  </div>
+<% end %>
+
+<div class="mb-3">
+  <%= f.label :name, class: "form-label" %>
+  <%= f.text_field :name, class: "form-control" %>
+</div>
+
+<div class="mb-3">
+  <%= f.label :description, class: "form-label" %>
+  <%= f.text_area :description, class: "form-control" %>
+</div>
+
+<div class="mb-3">
+  <%= f.label :price, class: "form-label" %>
+  <%= f.number_field :price, class: "form-control", step: 0.01 %>
+</div>
+
+<%= f.submit class: "btn btn-success" %>
+<%= link_to "Back", products_path, class: "btn btn-secondary" %>

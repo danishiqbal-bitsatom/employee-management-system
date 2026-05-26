@@ -1,0 +1,165 @@
+<div class="container">
+<div class="d-flex justify-content-between align-items-center mb-3 mt-4">
+  <%= form_with url: employee_details_path, method: :get, local: true do %>
+
+  <div class="row mb-4">
+
+    <%# Search Box %>
+
+    <div class="col-md-4 mb-2">
+      <%= text_field_tag :search,
+          params[:search],
+          placeholder: "Search by name, email, designation or department",
+          class: "form-control" %>
+    </div>
+
+    <%# Status Filter %>
+
+    <div class="col-md-3 mb-2">
+      <%= select_tag :status,
+          options_for_select(
+            [["All Status", ""],
+             ["Active", "active"],
+             ["Inactive", "inactive"]],
+            params[:status]
+          ),
+          class: "form-select" %>
+    </div>
+
+    <%# Sorting Options %>
+
+    <div class="col-md-3 mb-2">
+      <%= select_tag :sort,
+          options_for_select(
+            [["Sort By", ""],
+             ["Joining Date", "joining_date"],
+             ["Department", "department"]],
+            params[:sort]
+          ),
+          class: "form-select" %>
+    </div>
+
+     <%# Search Button  %>
+     
+    <div class="d-flex justify-content-between gap-2 col-md-2 mb-2" ">
+      <%= submit_tag "Search", class: "btn btn-primary w-100" %>
+      <%= link_to "Reset", employee_details_path, class: "btn btn-secondary w-100" %>
+    </div>
+  </div>
+
+<% end %>
+
+ <%# Employee Details Index View %>
+</div>
+   
+   <div class="d-grid gap-2">
+   <span class="d-flex align-items-center mb-3">
+      <h2 class="mb-0">All Employees</h2>
+
+      <span class="ms-auto">
+      
+       <% if current_user.admin? %>
+         <%= link_to "Department", departments_path, class: " hover-shadow shadow-lg btn btn-success btn-md rounded-pill" %>
+       <% end %>
+
+       <% if current_user.admin? || current_user.hr? %>
+         <%= link_to "Add Employee", new_employee_detail_path, class: "btn btn-primary btn-md rounded-pill" %>
+       <% end %>
+
+    </span>
+  </span>
+  </div>
+ 
+  <!-- Employee Summary Cards -->
+
+  <div class="row mb-4">
+
+  <div class="col-md-3">
+    <div class="card p-3 shadow-lg hover-shadow rounded-5">
+      <h5 class="text-center">Total Employees</h5>
+      <h3 class="text-primary text-center"><%= @total_employees %></h3>
+    </div>
+  </div>
+
+  <div class="col-md-3">
+    <div class="card p-3 shadow-lg hover-shadow rounded-5">
+      <h5 class="text-center">Active Employees</h5>
+      <h3 class="text-success text-center"><%= @active_employees%></h3>
+    </div>
+  </div>
+
+  <div class="col-md-3">
+    <div class="card p-3 shadow-lg hover-shadow rounded-5">
+      <h5 class="text-center">Inactive Employees</h5>
+      <h3 class="text-danger text-center"><%= @inactive_employees %></h3>
+    </div>
+  </div>
+
+  <div class="col-md-3">
+    <div class="card p-3 shadow-lg hover-shadow rounded-5">
+      <h5 class="text-center">Total Departments</h5>
+      <h3 class="text-info text-center"><%= @total_departments %></h3>
+    </div>
+  </div>
+
+
+  <%# Employee Details Table %>
+
+</div>
+  <% if @employee_details.any? %>
+<div class="table-responsive">
+    <table class="table table-bordered table-hover align-middle">
+      <thead class="table-dark">
+        <tr>
+          <th>Employee ID</th>
+          <th>Full Name</th>
+          <th>Email</th>
+          <th>Designation</th>
+          <th>Status</th>
+          <th>Joining Date</th>
+          <th>Department</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @employee_details.each do |employee| %>
+          <tr>
+            <td><%= employee.employee_id %></td>
+            <td><strong><%= employee.name %></strong></td>
+            <td><%= employee.email %></td>
+            <td><%= employee.designation %></td>
+            <td>
+              <span class="badge bg-<%= employee.status == 'active' ? 'success' : employee.status == 'inactive' ? 'danger' : 'warning' %>">
+                <%= employee.status %>
+              </span>
+            </td>
+            <td><%= employee.joining_date&.strftime("%d %b %Y") %></td>
+            <td><%= employee.department&.name %></td>
+
+             <td class="d-flex gap-2">
+              <%= link_to "View",   employee_detail_path(employee), class: "btn btn-sm btn-info" %>
+
+              <% if current_user.admin? || current_user.hr? %>
+                <%= link_to "Edit",   edit_employee_detail_path(employee), class: "btn btn-sm btn-warning" %>
+              <% end %>
+
+              <% if current_user.admin? %>
+                <%= button_to "Delete", employee_detail_path(employee), method: :delete,data: {turbo_confirm: "Are you sure?" },class: "btn btn-sm btn-danger" %>
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+<% else %>
+  <div class="text-center py-5 text-muted">
+    <p class="fs-4">No employees found.</p>
+    <%= link_to "Add the first one!", new_employee_detail_path, class: "btn btn-primary" %>
+  </div>
+<% end %>
+
+   <span class="ms-auto justify-content-end d-flex mt-4">
+    <%= paginate @employee_details %>
+  </span>
+</div>

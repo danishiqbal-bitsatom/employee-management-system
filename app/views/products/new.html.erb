@@ -1,0 +1,8 @@
+
+<div class="container mt-4">
+<h2 class="mb-3">New Product</h2>
+
+<%= form_with model: @product do |f| %>
+  <%= render "form", product: @product, f: f %>
+<% end %>
+</div>
