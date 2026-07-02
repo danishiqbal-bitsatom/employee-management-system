@@ -20,7 +20,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_16_214254) do
     t.index ["blob_id"], name: "index_active_storage_attachments_on_blob_id"
     t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
   end
-
+  
   create_table "active_storage_blobs", force: :cascade do |t|
     t.bigint "byte_size", null: false
     t.string "checksum"
@@ -66,6 +66,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_16_214254) do
     t.datetime "updated_at", null: false
     t.index ["department_id"], name: "index_employee_details_on_department_id"
   end
+
+  create_table "departments", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+   
 
   create_table "leave_requests", force: :cascade do |t|
     t.datetime "created_at", null: false
