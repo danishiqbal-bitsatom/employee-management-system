@@ -12,8 +12,7 @@ class Ability
     elsif user.employee?
       can :read, User, id: user.id
     end
-  end
-end
+
 
     # Define abilities for the user here. For example:
     #
