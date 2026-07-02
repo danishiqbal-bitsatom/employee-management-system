@@ -91,7 +91,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_16_214254) do
   end
 
   create_table "users", force: :cascade do |t|
-    t.integer "available_leaves", 
+    t.integer "available_leaves"
     t.datetime "created_at", null: false
     t.integer "department_id"
     t.string "designation"
