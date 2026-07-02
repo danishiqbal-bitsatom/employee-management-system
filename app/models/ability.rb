@@ -8,9 +8,13 @@ class Ability
     if user.admin?
       can :manage, :all
     elsif user.hr?
-      can :manage :read,:edit
+      can [:read, :edit, :update], User
     elsif user.employee?
       can :read, User, id: user.id
+    end
+  end
+end
+
     # Define abilities for the user here. For example:
     #
     #   return unless user.present?
