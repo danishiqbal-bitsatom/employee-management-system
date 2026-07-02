@@ -1,0 +1,47 @@
+<div class="container mt-4">
+
+  <div class="card">
+
+    <div class="card-header">
+      Leave Details
+    </div>
+
+    <div class="card-body">
+
+      <p>
+        <strong>Leave Type:</strong>
+        <%= @leave_request.leave_type.humanize %>
+      </p>
+
+      <p>
+        <strong>Start Date:</strong>
+        <%= @leave_request.start_date %>
+      </p>
+
+      <p>
+        <strong>End Date:</strong>
+        <%= @leave_request.end_date %>
+      </p>
+
+      <p>
+        <strong>Total Days:</strong>
+        <%= @leave_request.total_days %>
+      </p>
+
+      <p>
+        <strong>Status:</strong>
+        <%= @leave_request.status %>
+      </p>
+
+      <p>
+        <strong>Reason:</strong>
+        <%= @leave_request.reason %>
+      </p>
+
+      <%= link_to "Back", leave_requests_path, class: "btn btn-secondary" %>
+
+    </div>
+
+  </div>
+
+</div>

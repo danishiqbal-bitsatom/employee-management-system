@@ -69,3 +69,11 @@ gem 'solargraph'
 gem 'devise'
 
 gem "kaminari", "~> 1.2"
+
+gem 'sidekiq'
+
+gem "cancancan"
+
+gem "byebug"
+
+gem "jwt"

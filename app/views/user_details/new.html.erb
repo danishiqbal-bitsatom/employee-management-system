@@ -1,7 +1,7 @@
 <div class="container mt-5">
 <h2 class="mb-4">Add New Employee</h2>
 
-<%= form_with(model: @employee_detail, local: true) do |f| %>
+<%= form_with(model: @employee_detail,url: user_details_path, local: true) do |f| %>
 
   <div class="card shadow-sm p-4">
     <%= render 'form', employee: @employee_detail, f: f %>

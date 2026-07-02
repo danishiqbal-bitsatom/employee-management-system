@@ -1,0 +1,59 @@
+<%= form_with model: leave_request, local: true do |f| %>
+
+  <% if leave_request.errors.any? %>
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+      <strong><i class="bi bi-exclamation-circle me-1"></i>Please fix the following:</strong>
+      <ul class="mb-0 mt-1">
+        <% leave_request.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+      <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+  <% end %>
+
+  <%# Leave Type %>
+  <div class="mb-4">
+    <label class="form-label text-uppercase fw-semibold small text-muted letter-spacing-1">
+      Leave Type <span class="text-danger">*</span>
+    </label>
+    <%= f.select :leave_type,
+                 LeaveRequest.leave_types.keys.map { |t| [t.humanize, t] },
+                 { include_blank: "Select Leave Type" },
+                 class: "form-select" %>
+  </div>
+
+  <%# Start & End Date - side by side %>
+  <div class="row g-3 mb-4">
+    <div class="col-md-6">
+      <label class="form-label text-uppercase fw-semibold small text-muted">
+        Start Date <span class="text-danger">*</span>
+      </label>
+      <%= f.date_field :start_date, class: "form-control" %>
+    </div>
+    <div class="col-md-6">
+      <label class="form-label text-uppercase fw-semibold small text-muted">
+        End Date <span class="text-danger">*</span>
+      </label>
+      <%= f.date_field :end_date, class: "form-control" %>
+    </div>
+  </div>
+
+  <%# Reason %>
+  <div class="mb-4">
+    <label class="form-label text-uppercase fw-semibold small text-muted">
+      Reason <span class="text-danger">*</span>
+    </label>
+    <%= f.text_area :reason,
+                    rows: 4,
+                    placeholder: "Briefly describe your reason for leave...",
+                    class: "form-control" %>
+  </div>
+
+  <%# Footer Buttons %>
+  <div class="d-flex justify-content-end gap-2 pt-3 border-top">
+    <%= link_to "Cancel", leave_requests_path, class: "btn btn-outline-secondary" %>
+    <%= f.submit "Apply Leave", class: "btn btn-success px-4" %>
+  </div>
+
+<% end %>

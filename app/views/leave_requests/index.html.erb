@@ -1,0 +1,221 @@
+<div class="container px-4 py-4">
+
+  <%# ── Page header ── %>
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h3 class="fw-semibold mb-0"><i class="bi bi-calendar-event me-2"></i> Leave Requests</h3>
+      <small class="text-muted">Track your leave applications and balance</small>
+    </div>
+
+    <% unless admin_or_hr? %>
+      <%= link_to new_leave_request_path, class: "btn btn-primary d-flex align-items-center gap-2" do %>
+        <i class="bi bi-plus-lg"></i>
+        <span>Apply Leave</span>
+      <% end %>
+    <% end %>
+  </div>
+
+  <%# ── Summary cards (employee only) ── %>
+  <% unless admin_or_hr? %>
+    <div class="row g-3 mb-4">
+
+    <div class="col-6 col-md-3">
+      <div class="card p-3 shadow-lg hover-shadow rounded-5 summary-card text-center">
+        <h5>Sick Leave</h5>
+        <h3 class="text-dark"><%= @sick_leaves %></h3>
+      </div>
+    </div>
+
+     <div class="col-6 col-md-3">
+      <div class="card p-3 shadow-lg hover-shadow rounded-5 summary-card text-center">
+        <h5>Casual Leave</h5>
+        <h3 class="text-dark"><%= @casual_leaves %></h3>
+      </div>
+    </div>
+
+    <div class="col-6 col-md-3">
+      <div class="card p-3 shadow-lg outline-secondary hover-shadow rounded-5 summary-card text-center">
+        <h5>Paid Leave</h5>
+        <h3 class="text-dark"><%= @paid_leaves %></h3>
+      </div>
+    </div>
+
+     <div class="col-6 col-md-3">
+      <div class="card p-3 shadow-lg hover-shadow rounded-5 summary-card text-center">
+        <h5>Maternity Leave</h5>
+        <h3 class="text-dark"><%= @maternity_leaves %></h3>
+      </div>
+    </div>
+
+    <div class="col-6 col-md-3">
+      <div class="card p-3 shadow-lg hover-shadow rounded-5 summary-card text-center">
+        <h5>Paternity Leave</h5>
+        <h3 class="text-dark"><%= @paternity_leaves %></h3>
+      </div>
+    </div>
+
+    <div class="col-6 col-md-3">
+      <div class="card p-3 shadow-lg hover-shadow rounded-5 summary-card text-center">
+        <h5>UnPaid Leave</h5>
+        <h3 class="text-dark"><%= @unpaid_leaves %></h3>
+      </div>
+    </div>
+
+    <div class="col-6 col-md-3">
+      <div class="card p-3 shadow-lg hover-shadow rounded-5 summary-card text-center">
+        <h5>Optional Leave</h5>
+        <h3 class="text-dark"><%= @optional_leaves %></h3>
+      </div>
+    </div>
+
+    <div class="col-6 col-md-3">
+      <div class="card p-3 shadow-lg hover-shadow rounded-5 summary-card text-center">
+        <h5>Available Leaves</h5>
+        <h3 class="text-dark"><%= @current_employee_detail.available_leaves %></h3>
+      </div>
+    </div>
+
+    </div>
+  <% end %>
+
+  <%# ── Leave history table ── %>
+  <div class="card border shadow-lg rounded-5">
+    <div class="card-header hover-shadow bg-white py-3 px-4 d-flex justify-content-between align-items-center">
+      <h6 class="fw-semibold mb-0">Leave History</h6>
+      <span class="badge bg-secondary bg-opacity-10 text-secondary">
+        <%= @leave_requests.total_count %> records
+      </span>
+    </div>
+
+    <div class="card-body ">
+      <% if @leave_requests.any? %>
+        <div class="table-responsive">
+          <table class="table table-bordered table-hover align-middle">
+            <thead class="table-grey">
+              <tr>
+                <th class="ps-4 fw-medium text-hover medium text-uppercase py-3">Leave Type</th>
+                <th class="fw-medium text-hover medium text-uppercase py-3">Start Date</th>
+                <th class="fw-medium text-hover medium text-uppercase py-3">End Date</th>
+                <th class="fw-medium text-hover medium text-uppercase py-3">Days</th>
+                <th class="fw-medium text-hover medium text-uppercase py-3">Status</th>
+                <th class="fw-medium text-hover medium text-uppercase py-3">Reason</th>
+                <% if admin_or_hr? %>
+                  <th class="pe-4 fw-medium text-hover medium text-uppercase py-3">Employee</th>
+                <% end %>
+              <th class="pe-4 fw-medium text-hover medium text-uppercase py-3">Actions</th>
+        
+              </tr>
+            </thead>
+
+            <tbody>
+              <% @leave_requests.each do |leave| %>
+                <tr>
+                  <td class="ps-4">
+                    <% type_styles = {
+                      "sick"       => "background:#EFF6FF; color:#1d4ed8;",
+                      "casual"     => "background:#F0FDF4; color:#15803d;",
+                      "paid"       => "background:#FEFCE8; color:#a16207;",
+                      "maternity"  => "background:#FDF4FF; color:#7e22ce;",
+                      "paternity"  => "background:#FFF7ED; color:#c2410c;",
+                      "unpaid"     => "background:#FFF1F2; color:#be123c;",
+                      "optional"   => "background:#F0FDFA; color:#0f766e;"
+                    } %>
+                    <% style = type_styles[leave.leave_type] || "background:#F1F5F9; color:#475569;" %>
+                    <span class="badge rounded-pill fw-high px-3 py-2" style="font-size:12px; <%= style %>">
+                      <%= leave.leave_type.humanize %>
+                    </span>
+                  </td>
+
+                  <td class="text-hover"><%= leave.start_date.strftime("%d %b %Y") %></td>
+                  <td class="text-hover"><%= leave.end_date.strftime("%d %b %Y") %></td>
+
+                  <td>
+                    <span class="fw-semibold"><%= leave.total_days %></span>
+                    <span class="text-hover small">day<%= leave.total_days == 1 ? '' : 's' %></span>
+                  </td>
+
+                  <td>
+                    <% if leave.rejected? %>
+                      <span class="badge rounded-pill px-3 py-2 fw-normal"
+                            style="background:#FAA0A0; color:#9f1239; font-size:12px;">
+                        ● Rejected
+                      </span>
+                    <% elsif leave.approved? %>
+                      <span class="badge rounded-pill px-3 py-2 fw-normal"
+                            style="background:#F0FDF4; color:#166534; font-size:12px;">
+                        ● Approved
+                      </span>
+                    <% else %>
+                      <span class="badge rounded-pill px-3 py-2 fw-normal"
+                            style="background:#FFFCE8; color:#92400e; font-size:12px;">
+                        ● Pending
+                      </span>
+                    <% end %>
+                  </td>
+
+                  <td class="text-bold" style="max-width:200px;">
+                    <span class="d-inline-block text-hover truncate" title="<%= leave.reason %>">
+                      <%= leave.reason %>
+                    </span>
+                  </td>
+                  
+
+                  <% if admin_or_hr? %>
+                    <td class="pe-4">
+                      <div class="d-flex align-items-center gap-2">
+                        <div class="avatar rounded-circle bg-info bg-opacity-10 text-info d-flex align-items-center justify-content-center" style="width:32px; height:32px;">
+                          <%= leave.user.name.first(2).upcase %>
+                        </div>
+                        <span class="small"><%= leave.user.name %></span>
+                      </div>
+                    </td>
+                  <% end %>
+
+                  <td>
+                    <div class="d-flex flex-wrap gap-2">
+                      <% if admin_or_hr? && leave.pending? %>
+                        <%= button_to approve_leave_request_path(leave), method: :patch, class: "btn btn-sm btn-outline-success" do %>
+                          <i class="bi bi-check2 me-1"></i> Approve
+                        <% end %>
+                        <%= button_to reject_leave_request_path(leave), method: :patch, class: "btn btn-sm btn-outline-danger" do %>
+                          <i class="bi bi-x-lg me-1"></i> Reject
+                        <% end %>
+                      <% end %>
+
+                      <% if leave.pending? && !admin_or_hr? %>
+                        <%= button_to leave_request_path(leave), method: :delete, data: { turbo_confirm: "Are you sure?" }, class: "btn btn-sm btn-outline-danger" do %>
+                          <i class="bi bi-trash me-1"></i> Delete
+                        <% end %>
+                      <% end %>
+
+                      <%= link_to leave_request_path(leave), class: "btn btn-sm btn-outline-primary" do %>
+                        <i class="bi bi-eye me-1"></i> View
+                      <% end %>
+                    </div>
+                  </td>
+
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="d-flex justify-content-end px-4 py-3 border-top">
+          <%= paginate @leave_requests %>
+        </div>
+
+      <% else %>
+        <div class="text-center py-5">
+          <i class="bi bi-calendar-x fs-1 text-muted opacity-50"></i>
+          <p class="text-muted mt-3 mb-0">No leave requests found.</p>
+          <% unless admin_or_hr? %>
+           <%= link_to "Apply Leave", new_leave_request_path, class: "btn btn-primary mt-3 btn-sm" %>
+          <% end %>
+        </div>
+      <% end %>
+      <%= link_to "Back", user_details_path, class: "btn btn-secondary" %>
+    </div>
+  </div>
+  
+
+</div>

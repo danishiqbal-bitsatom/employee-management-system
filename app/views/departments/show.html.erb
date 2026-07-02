@@ -6,9 +6,9 @@
       <h5 class="card-title"><%= @department.name %></h5>
 
       <h6 class="mt-3">Employees:</h6>
-      <% if @department.employee_details.any? %>
+      <% if @department.users.any? %>
         <ul class="list-group">
-          <% @department.employee_details.each do |employee| %>
+          <% @department.users.each do |employee| %>
             <li class="list-group-item"><%= employee.name %></li>
           <% end %>
         </ul>

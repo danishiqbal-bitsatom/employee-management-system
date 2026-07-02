@@ -1,0 +1,29 @@
+<%# email send when Account is created %>
+
+<div style="
+    max-width:600px;
+    margin:auto;
+    padding:20px;
+    background:#ffffff;
+    border-radius:10px;
+    border:1px solid #ddd;
+    font-family:Arial,sans-serif;">
+    
+    <h1 style="color: #333; font-size: 24px;">Welcome <%= @user.name %></h1>
+
+    <p>Thank you for joining us!</p>
+    
+    <h3 style="color: #555; font-size: 18px;">Your account has been created successfully. You can now log in using your email and password</h3>
+    
+    <p>
+        Your login credentials are as follows:
+    </p>
+
+    <ul style="list-style-type: disc; padding-left: 20px;">
+        <li style="color: #333; font-size: 16px;">Email: <%= @user.email %></li>
+        <li style="color: #333; font-size: 16px;">Password: <%= @user.password %></li>
+    </ul>
+    
+    <p> Thank You </p><br>
+    <p>Hr Team</p>
+</div>

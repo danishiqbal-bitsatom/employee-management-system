@@ -1,0 +1,332 @@
+<%# app/views/profiles/edit.html.erb %>
+
+<div class="container py-4 border" style="max-width: 860px;">
+
+  <%# ── Flash / Error Messages ── %>
+
+  <% if @employee_detail.errors.any? %>
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+      <i class="bi bi-exclamation-triangle me-2"></i>
+      <strong><%= @employee_detail.errors.count %> error(s) found:</strong>
+      <ul class="mb-0 mt-1">
+        <% @employee_detail.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+      </ul>
+      <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+  <% end %>
+
+  <%# ── Page Header ── %>
+    <div class="d-flex align-items-center justify-content-between mb-4">
+    <div>
+      <h4 class="fw-semibold mb-0">Edit Profile</h4>
+      <p class="text-muted small mb-0">Update your personal info and documents</p>
+    </div>
+    <%= link_to profile_path, class: "btn btn-outline-secondary btn-sm" do %>
+      <i class="bi bi-arrow-left me-1"></i> Back to Profile
+    <% end %>
+  </div>
+
+  <%= form_with model: @employee_detail,url: profile_path,method: :patch,local: true,enctype: "multipart/form-data" do |f| %>
+
+    <%# ══════════════════════════════════════
+        CARD 1 — Personal Info
+    ══════════════════════════════════════ %>
+    <div class="card border-0 shadow-sm mb-4">
+      <div class="card-header bg-white border-bottom px-4 py-3">
+        <h6 class="mb-0 text-muted text-uppercase fw-semibold"
+            style="font-size:11px; letter-spacing:.06em;">
+          <i class="bi bi-person me-2"></i>Personal Info
+        </h6>
+      </div>
+      <div class="card-body px-4 py-4">
+        <div class="row g-3">
+
+          <div class="col-md-6">
+            <%= f.label :name, class: "form-label fw-medium" do %>
+              <i class="bi bi-person-badge me-1 text-muted"></i> Full Name
+            <% end %>
+            <%= f.text_field :name,
+                class: "form-control #{'is-invalid' if @employee_detail.errors[:name].any?}",
+                placeholder: "Enter your full name" %>
+            <% if @employee_detail.errors[:name].any? %>
+              <div class="invalid-feedback">
+                <%= @employee_detail.errors[:name].first %>
+              </div>
+            <% end %>
+          </div>
+
+          <%# Phone — agar model mein hai %>
+          <% if @employee_detail.respond_to?(:phone) %>
+            <div class="col-md-6">
+              <%= f.label :phone, class: "form-label fw-medium" do %>
+                <i class="bi bi-telephone me-1 text-muted"></i> Phone
+              <% end %>
+              <%= f.text_field :phone,
+                  class: "form-control",
+                  placeholder: "+91 98765 43210" %>
+            </div>
+          <% end %>
+
+        </div>
+      </div>
+    </div>
+
+    <%# ══════════════════════════════════════
+        CARD 2 — Profile Picture
+    ══════════════════════════════════════ %>
+    <div class="card border-0 shadow-sm mb-4">
+      <div class="card-header bg-white border-bottom px-4 py-3">
+        <h6 class="mb-0 text-muted text-uppercase fw-semibold"
+            style="font-size:11px; letter-spacing:.06em;">
+          <i class="bi bi-image me-2"></i>Profile Picture
+        </h6>
+      </div>
+      <div class="card-body px-4 py-4">
+        <div class="d-flex align-items-center gap-4 flex-wrap">
+
+          <%# Current preview %>
+          <div style="flex-shrink:0;">
+            <% if @employee_detail.profile_picture.attached? %>
+              <%=image_tag @employee_detail.profile_picture,
+                  class: "rounded-circle border",
+                  style: "width:80px;height:80px;object-fit:cover;",
+                  id: "avatar-preview" %>
+            <% else %>
+              <div class="rounded-circle bg-primary bg-opacity-10 text-primary
+                          d-flex align-items-center justify-content-center fw-semibold fs-4"
+                   style="width:80px;height:80px;" id="avatar-preview-placeholder">
+                <%= @employee_detail.name.to_s.split.map(&:first).join.upcase.first(2) %>
+              </div>
+            <% end %>
+          </div>
+
+          <div class="flex-grow-1">
+            <%= f.label :profile_picture, class: "form-label fw-medium" %>
+            <%= f.file_field :profile_picture,
+                class: "form-control",
+                accept: "image/*",
+                id: "profile-picture-input" %>
+            <div class="form-text">
+              <i class="bi bi-info-circle me-1"></i>
+              JPG, PNG, GIF allowed. Max 5 MB.
+            </div>
+
+            <% if @employee_detail.profile_picture.attached? %>
+              <div class="mt-2 d-flex align-items-center gap-2">
+                <i class="bi bi-check-circle text-success"></i>
+                <small class="text-muted">
+                  Current: <strong><%= @employee_detail.profile_picture.filename %></strong>
+                  (<%= number_to_human_size(@employee_detail.profile_picture.byte_size) %>)
+                </small>
+              </div>
+            <% end %>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <%# ══════════════════════════════════════
+        CARD 3 — Resume & ID Proof
+    ══════════════════════════════════════ %>
+    <div class="card border-0 shadow-sm mb-4">
+      <div class="card-header bg-white border-bottom px-4 py-3">
+        <h6 class="mb-0 text-muted text-uppercase fw-semibold"
+            style="font-size:11px; letter-spacing:.06em;">
+          <i class="bi bi-file-earmark-text me-2"></i>Documents — Resume & ID Proof
+        </h6>
+      </div>
+      <div class="card-body px-4 py-4">
+        <div class="row g-4">
+
+          <%# Resume %>
+          <div class="col-md-6">
+            <div class="p-3 rounded border">
+              <label class="form-label fw-medium">
+                <i class="bi bi-file-earmark-text me-1 text-danger"></i> Resume
+              </label>
+
+              <% if @employee_detail.resume.attached? %>
+                <div class="d-flex align-items-center gap-2 mb-2 p-2 bg-light rounded">
+                  <i class="bi bi-file-earmark-pdf text-danger fs-5"></i>
+                  <div class="overflow-hidden">
+                    <p class="mb-0 small fw-medium text-truncate">
+                      <%= @employee_detail.resume.filename %>
+                    </p>
+                    <p class="mb-0 text-muted" style="font-size:11px;">
+                      <%= number_to_human_size(@employee_detail.resume.byte_size) %>
+                    </p>
+                  </div>
+                  <%= link_to rails_blob_path(@employee_detail.resume, disposition: "inline"),
+                      class: "btn btn-outline-primary btn-sm ms-auto px-2",
+                      target: "_blank", title: "Preview" do %>
+                    <i class="bi bi-eye"></i>
+                  <% end %>
+                </div>
+              <% end %>
+
+              <%= f.file_field :resume,
+                  class: "form-control",
+                  accept: ".pdf,.doc,.docx" %>
+              <div class="form-text">
+                <i class="bi bi-info-circle me-1"></i>
+                PDF or Word. Max 10 MB.
+                <% if @employee_detail.resume.attached? %>
+                  Upload new file to replace existing one.
+                <% end %>
+              </div>
+            </div>
+          </div>
+
+          <%# ID Proof %>
+
+          <div class="col-md-6">
+            <div class="p-3 rounded border">
+              <label class="form-label fw-medium">
+                <i class="bi bi-card-image me-1 text-warning"></i> ID Proof
+              </label>
+
+              <% if @employee_detail.id_proof.attached? %>
+                <div class="d-flex align-items-center gap-2 mb-2 p-2 bg-light rounded">
+                  <% if @employee_detail.id_proof.image? %>
+                    <%= image_tag @employee_detail.id_proof,
+                        class: "rounded",
+                        style: "width:36px;height:36px;object-fit:cover;flex-shrink:0;" %>
+                  <% else %>
+                    <i class="bi bi-file-earmark-image text-warning fs-5"></i>
+                    
+                  <% end %>
+                  <div class="overflow-hidden">
+                    <p class="mb-0 small fw-medium text-truncate">
+                      <%= @employee_detail.id_proof.filename %>
+                    </p>
+                    <p class="mb-0 text-muted" style="font-size:11px;">
+                      <%= number_to_human_size(@employee_detail.id_proof.byte_size) %>
+                    </p>
+                  </div>
+                  <%= link_to rails_blob_path(@employee_detail.id_proof, disposition: "inline"),
+                      class: "btn btn-outline-primary btn-sm ms-auto px-2",
+                      target: "_blank", title: "Preview" do %>
+                    <i class="bi bi-eye"></i>
+                  <% end %>
+                </div>
+              <% end %>
+
+              <%= f.file_field :id_proof,
+                  class: "form-control",
+                  accept: "image/*,.pdf" %>
+              <div class="form-text">
+                <i class="bi bi-info-circle me-1"></i>
+                Image ya PDF. Max 5 MB.
+                <% if @employee_detail.id_proof.attached? %>
+                  Upload new file to replace existing one.
+                <% end %>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <%# ══════════════════════════════════════
+        CARD 4 — Multiple Documents
+    ══════════════════════════════════════ %>
+    <div class="card border-0 shadow-sm mb-4">
+      <div class="card-header bg-white border-bottom px-4 py-3 d-flex align-items-center justify-content-between">
+        <h6 class="mb-0 text-muted text-uppercase fw-semibold"
+            style="font-size:11px; letter-spacing:.06em;">
+          <i class="bi bi-files me-2"></i>Additional Documents
+        </h6>
+        <% if @employee_detail.documents.attached? %>
+          <span class="badge bg-secondary bg-opacity-10 text-secondary">
+            <%= @employee_detail.documents.count %> uploaded
+          </span>
+        <% end %>
+      </div>
+      <div class="card-body px-4 py-4">
+
+        <%# Already uploaded files list %>
+        <% if @employee_detail.documents.attached? %>
+          <p class="text-muted small fw-medium mb-2">Already uploaded:</p>
+          <div class="row g-2 mb-3">
+            <% @employee_detail.documents.each do |doc| %>
+              <div class="col-12">
+                <div class="d-flex align-items-center gap-3 p-2 bg-light rounded border">
+
+                  <% if doc.image? %>
+                    <%= image_tag doc.variant(resize_to_fill: [36, 36]),
+                        class: "rounded",
+                        style: "width:36px;height:36px;object-fit:cover;flex-shrink:0;" %>
+                  <% elsif doc.content_type == "application/pdf" %>
+                    <i class="bi bi-file-earmark-pdf text-danger fs-5" style="flex-shrink:0;"></i>
+                  <% elsif doc.content_type.include?("sheet") || doc.content_type.include?("excel") %>
+                    <i class="bi bi-file-earmark-excel text-success fs-5" style="flex-shrink:0;"></i>
+                  <% elsif doc.content_type.include?("word") %>
+                    <i class="bi bi-file-earmark-word text-primary fs-5" style="flex-shrink:0;"></i>
+                  <% else %>
+                    <i class="bi bi-file-earmark text-secondary fs-5" style="flex-shrink:0;"></i>
+                  <% end %>
+
+                  <div class="flex-grow-1 overflow-hidden">
+                    <p class="mb-0 small fw-medium text-truncate"><%= doc.filename %></p>
+                    <p class="mb-0 text-muted" style="font-size:11px;">
+                      <%= number_to_human_size(doc.byte_size) %>
+                    </p>
+                  </div>
+
+                  <%= link_to rails_blob_path(doc, disposition: "inline"),
+                      class: "btn btn-outline-primary btn-sm px-2",
+                      target: "_blank", title: "Preview" do %>
+                    <i class="bi bi-eye"></i>
+                  <% end %>
+
+                </div>
+              </div>
+            <% end %>
+          </div>
+
+          <p class="text-muted small mb-2">
+            <i class="bi bi-info-circle me-1"></i>
+          You can Upload multiple files
+          </p>
+        <% end %>
+
+        <%# Upload new documents %>
+        <%= f.file_field :documents,
+            multiple: true,
+            class: "form-control",
+            accept: "image/*,.pdf,.doc,.docx,.xls,.xlsx" %>
+        <div class="form-text">
+          <i class="bi bi-info-circle me-1"></i>
+          PDF, Word, Excel, Images allowed.
+        </div>
+
+      </div>
+    </div>
+
+    <%# ══════════════════════════════════════
+        SUBMIT BUTTONS
+    ══════════════════════════════════════ %>
+    <div class="card border-0 shadow-sm">
+      <div class="card-body px-4 py-3 d-flex align-items-center justify-content-between flex-wrap gap-2">
+        <p class="text-muted small mb-0">
+          <i class="bi bi-clock me-1"></i>
+          Last updated: <%= time_ago_in_words(@employee_detail.updated_at) %> ago
+        </p>
+        <div class="d-flex gap-2">
+          <%= link_to profile_path, class: "btn btn-outline-secondary" do %>
+            <i class="bi bi-x me-1"></i> Cancel
+          <% end %>
+          <%= f.submit "Save Changes",
+              class: "btn btn-primary",
+              data: { disable_with: "Saving..." } do %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+  <% end %>
+</div>

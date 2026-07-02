@@ -1,0 +1,267 @@
+<%# app/views/profiles/show.html.erb %>
+
+
+
+<div class="container py-4" style="max-width: 860px;">
+
+ 
+
+  <%# ══════════════════════════════════════
+      HEADER CARD — Avatar + Name + Actions
+  ══════════════════════════════════════ %>
+  <div class="card border-1 shadow-sm mb-4">
+    <div class="card-body d-flex align-items-center gap-3 flex-wrap py-4 px-4">
+
+      <%# Profile Picture or Initials %>
+      <% if @employee_detail.profile_picture.attached? %>
+        <%= image_tag @employee_detail.profile_picture,
+            class: "rounded-circle border",
+            style: "width:72px;height:72px;object-fit:cover;flex-shrink:0;" %>
+      <% else %>
+        <div class="rounded-circle bg-primary bg-opacity-10 text-primary d-flex
+                    align-items-center justify-content-center fw-semibold fs-4"
+             style="width:72px;height:72px;flex-shrink:0;">
+          <%= @employee_detail.name.to_s.split.map(&:first).join.upcase.first(2) %>
+        </div>
+      <% end %>
+
+      <div class="flex-grow-1">
+        <h4 class="mb-0 fw-semibold"><%= @employee_detail.name %></h4>
+        <p class="text-muted mb-0 small">
+          <i class="bi bi-envelope me-1"></i><%= @employee_detail.email %>
+        </p>
+      </div>
+
+      <%= link_to edit_profile_path, class: "btn btn-primary btn-sm" do %>
+        <i class="bi bi-pencil me-1"></i> Edit Profile
+      <% end %>
+      <%= link_to "Back", user_details_path, class: "btn btn-primary btn-sm" %>
+
+    </div>
+  </div>
+
+  <%# ══════════════════════════════════════
+      PERSONAL INFO CARD
+  ══════════════════════════════════════ %>
+  <div class="card border-1 shadow-sm mb-4">
+    <div class="card-header bg-white border-bottom px-4 py-3">
+      <h4 class="mb-0 text-muted text-uppercase fw-semibold"
+          style="font-size:11px;letter-spacing:.06em;">
+        <i class="bi bi-person me-2 "></i> Personal Info
+      </h4>
+    </div>
+    <div class="card-body p-0">
+      <ul class="list-group list-group-flush">
+
+        <li class="list-group-item d-flex justify-content-between align-items-center px-4 py-3">
+          <span class="text-muted small">
+            <i class="bi bi-person-badge me-2"></i>Full Name
+          </span>
+          <span class="fw-medium"><%= @employee_detail.name.presence || "—" %></span>
+        </li>
+
+        <li class="list-group-item d-flex justify-content-between align-items-center px-4 py-3">
+          <span class="text-muted small">
+            <i class="bi bi-envelope me-2"></i>Email
+          </span>
+          <span class="fw-medium"><%= @employee_detail.email.presence || "—" %></span>
+        </li>
+
+        <%# Add more fields from your model below as needed %>
+        <% if @employee_detail.respond_to?(:phone) %>
+          <li class="list-group-item d-flex justify-content-between align-items-center px-4 py-3">
+            <span class="text-muted small">
+              <i class="bi bi-telephone me-2"></i>Phone
+            </span>
+            <span class="fw-medium"><%= @employee_detail.phone.presence || "—" %></span>
+          </li>
+        <% end %>
+
+      </ul>
+    </div>
+  </div>
+
+  <%# ══════════════════════════════════════
+      SINGLE FILES — Resume & ID Proof
+  ══════════════════════════════════════ %>
+  <div class="row g-3 mb-4">
+
+    <%# Resume %>
+    <div class="col-md-6">
+      <div class="card border-1 shadow-sm h-100">
+        <div class="card-header bg-white border-bottom px-4 py-3">
+          <h6 class="mb-0 text-muted text-uppercase fw-semibold"
+              style="font-size:11px;letter-spacing:.06em;">
+            <i class="bi bi-file-earmark-text me-2"></i>Resume
+          </h6>
+        </div>
+
+        <div class="card-body d-flex align-items-center gap-3">
+          <% if @employee_detail.resume.attached? %>
+            <div class="text-danger" style="font-size:2.2rem;">
+              <i class="bi bi-file-earmark-pdf"></i>
+            </div>
+            <div class="flex-grow-1 overflow-hidden">
+              <p class="fw-medium mb-0 text-truncate">
+                <%= @employee_detail.resume.filename %>
+              </p>
+              <p class="text-muted mb-2" style="font-size:12px;">
+                <%= number_to_human_size(@employee_detail.resume.byte_size) %>
+                &nbsp;·&nbsp; <%= @employee_detail.resume.content_type %>
+              </p>
+              <div class="d-flex gap-2">
+                <%= link_to rails_blob_path(@employee_detail.resume, disposition: "inline"),
+                    class: "btn btn-outline-primary btn-sm",
+                    target: "_blank" do %>
+                  <i class="bi bi-eye me-1"></i>View
+                <% end %>
+                <%= link_to rails_blob_path(@employee_detail.resume, disposition: "attachment"),
+                    class: "btn btn-outline-secondary btn-sm" do %>
+                  <i class="bi bi-download me-1"></i>Download
+                <% end %>
+              </div>
+            </div>
+          <% else %>
+            <div class="text-center text-muted w-100 py-2">
+              <i class="bi bi-file-earmark-x fs-2 d-block mb-1"></i>
+              <small>No resume uploaded</small>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <%# ID Proof %>
+    <div class="col-md-6">
+      <div class="card border-1 shadow-sm h-100">
+        <div class="card-header bg-white border-bottom px-4 py-3">
+          <h6 class="mb-0 text-muted text-uppercase fw-semibold"
+              style="font-size:11px;letter-spacing:.06em;">
+            <i class="bi bi-card-image me-2"></i>ID Proof
+          </h6>
+        </div>
+        <div class="card-body d-flex align-items-center gap-3">
+          <% if @employee_detail.id_proof.attached? %>
+
+            <% if @employee_detail.id_proof.image? %>
+              <%= image_tag @employee_detail.id_proof,
+                  class: "rounded border",
+                  style: "width:70px;height:70px;object-fit:cover;flex-shrink:0;" %>
+            <% else %>
+              <div class="text-warning" style="font-size:2.2rem;">
+                <i class="bi bi-file-earmark-image"></i>
+              </div>
+            <% end %>
+
+            <div class="flex-grow-1 overflow-hidden">
+              <p class="fw-medium mb-0 text-truncate">
+                <%= @employee_detail.id_proof.filename %>
+              </p>
+              <p class="text-muted mb-2" style="font-size:12px;">
+                <%= number_to_human_size(@employee_detail.id_proof.byte_size) %>
+              </p>
+              <div class="d-flex gap-2">
+                <%= link_to rails_blob_path(@employee_detail.id_proof, disposition: "inline"),
+                    class: "btn btn-outline-primary btn-sm",
+                    target: "_blank" do %>
+                  <i class="bi bi-eye me-1"></i>View
+                <% end %>
+                <%= link_to rails_blob_path(@employee_detail.id_proof, disposition: "attachment"),
+                    class: "btn btn-outline-secondary btn-sm" do %>
+                  <i class="bi bi-download me-1"></i>Download
+                <% end %>
+              </div>
+            </div>
+
+          <% else %>
+            <div class="text-center text-muted w-100 py-2">
+              <i class="bi bi-card-image fs-2 d-block mb-1"></i>
+              <small>No ID proof uploaded</small>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <%# ══════════════════════════════════════
+      MULTIPLE DOCUMENTS CARD
+  ══════════════════════════════════════ %>
+  <div class="card border-1 shadow-sm mb-4">
+    <div class="card-header bg-white border-bottom px-4 py-3 d-flex align-items-center justify-content-between">
+      <h6 class="mb-0 text-muted text-uppercase fw-semibold"
+          style="font-size:11px;letter-spacing:.06em;">
+        <i class="bi bi-files me-2"></i>Documents
+      </h6>
+      <% if @employee_detail.documents.attached? %>
+        <span class="badge bg-secondary bg-opacity-10 text-secondary">
+          <%= @employee_detail.documents.count %> files
+        </span>
+      <% end %>
+    </div>
+
+    <div class="card-body">
+      <% if @employee_detail.documents.attached? %>
+        <div class="row g-3">
+          <% @employee_detail.documents.each do |doc| %>
+            <div class="col-6 col-md-4 col-lg-3">
+              <div class="card border text-center p-3 h-100">
+
+                <%# Icon based on file type %>
+                <div class="mb-2" style="font-size:2rem; line-height:1;">
+                  <% if doc.image? %>
+                    <%= image_tag doc.variant(resize_to_fill: [56, 56]),
+                        class: "rounded",
+                        style: "width:52px;height:52px;object-fit:cover;" %>
+                  <% elsif doc.content_type == "application/pdf" %>
+                    <i class="bi bi-file-earmark-pdf text-danger"></i>
+                  <% elsif doc.content_type.include?("sheet") || doc.content_type.include?("excel") %>
+                    <i class="bi bi-file-earmark-excel text-success"></i>
+                  <% elsif doc.content_type.include?("word") || doc.content_type.include?("document") %>
+                    <i class="bi bi-file-earmark-word text-primary"></i>
+                  <% elsif doc.content_type.include?("zip") || doc.content_type.include?("compressed") %>
+                    <i class="bi bi-file-earmark-zip text-warning"></i>
+                  <% else %>
+                    <i class="bi bi-file-earmark text-secondary"></i>
+                  <% end %>
+                </div>
+
+                <p class="small fw-medium mb-0 text-truncate" title="<%= doc.filename %>">
+                  <%= doc.filename %>
+                </p>
+                <p class="text-muted mb-3" style="font-size:11px;">
+                  <%= number_to_human_size(doc.byte_size) %>
+                </p>
+
+                <div class="d-flex gap-1 justify-content-center mt-auto">
+                  <%= link_to rails_blob_path(doc, disposition: "inline"),
+                      class: "btn btn-outline-primary btn-sm px-2",
+                      title: "Preview", target: "_blank" do %>
+                    <i class="bi bi-eye"></i>
+                  <% end %>
+                  <%= link_to rails_blob_path(doc, disposition: "attachment"),
+                      class: "btn btn-outline-secondary btn-sm px-2",
+                      title: "Download" do %>
+                    <i class="bi bi-download"></i>
+                  <% end %>
+                </div>
+
+              </div>
+            </div>
+          <% end %>
+        </div>
+
+      <% else %>
+        <div class="text-center text-muted py-4">
+          <i class="bi bi-folder2-open fs-1 d-block mb-2"></i>
+          <p class="mb-0">No documents uploaded yet.</p>
+          <%= link_to edit_profile_path, class: "btn btn-primary btn-sm mt-3" do %>
+            <i class="bi bi-upload me-1"></i> Upload Documents
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+</div>

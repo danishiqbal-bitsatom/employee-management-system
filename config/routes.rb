@@ -25,7 +25,7 @@ Rails.application.routes.draw do
 }
 
   authenticated :user do
-    root to: "employee_details#index", as: :authenticated_root
+    root to: "user_details#index", as: :authenticated_root
   end
 
   unauthenticated do
@@ -33,8 +33,47 @@ Rails.application.routes.draw do
       root to: "devise/sessions#new"
     end
   end
+  
 
-  resources :employee_details
+  resources :user_details
+  # resources :employee_details
   resources :products
   resources :departments
+
+  resources :attendances, only: [:index] do
+   collection do
+    post :check_in
+   end
+
+   member do
+    patch :check_out
+   end
+  end
+
+  resources :leave_requests, only: [:index, :new, :create, :show, :edit, :update, :destroy]
+  resources :leave_requests do
+  member do
+    patch :approve
+    patch :reject
+  end
+  end
+
+  resource :profile, only: [:show, :edit, :update , :destroy]
+  # resources :profiles, only: [:show]
+
+
+
+
+  namespace :api do
+  namespace :v1 do
+
+    post "login", to: "auth#login"
+
+    resources :users
+    resources :departments
+
+  end
 end
+end
+
+

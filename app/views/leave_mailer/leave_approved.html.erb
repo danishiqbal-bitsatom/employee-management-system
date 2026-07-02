@@ -1,0 +1,49 @@
+<div style="max-width:600px;margin:auto;padding:20px;border:1px solid #ddd;border-radius:8px;font-family:Arial,sans-serif;">
+
+  <h2 style="color:green;">
+    Leave Approved ✅
+  </h2>
+
+  <p>
+    Hello <strong><%= @user.name %></strong>,
+  </p>
+
+  <p>
+    Your leave request has been approved successfully.
+  </p>
+
+  <table style="width:100%;border-collapse:collapse;">
+    <tr>
+      <td><strong>Leave Type</strong></td>
+      <td><%= @leave_request.leave_type %></td>
+    </tr>
+
+    <tr>
+      <td><strong>Start Date</strong></td>
+      <td><%= @leave_request.start_date %></td>
+    </tr>
+
+    <tr>
+      <td><strong>End Date</strong></td>
+      <td><%= @leave_request.end_date %></td>
+    </tr>
+
+    <tr>
+      <td><strong>Total Days</strong></td>
+      <td><%= @leave_request.total_days %></td>
+    </tr>
+
+  </table>
+
+  <br>
+
+  <p>
+    We wish you a pleasant leave.
+  </p>
+
+  <br>
+
+  Regards,<br>
+  HR Team
+
+</div>

@@ -7,14 +7,14 @@ class EmployeeDetailsController < ApplicationController
 
 
   def index
-  @employee_details = EmployeeDetail.includes(:department).page(params[:page]).per(5)
+  @employee_details =  User.includes(:department).page(params[:page]).per(5)
 
 
-  @total_employees = EmployeeDetail.count
+  @total_employees =  User.count
 
-  @active_employees = EmployeeDetail.where(status: "active").count
+  @active_employees =  User.where(status: "active").count
 
-  @inactive_employees = EmployeeDetail.where(status: "inactive").count
+  @inactive_employees =  User.where(status: "inactive").count
 
   @total_departments = Department.count
 
@@ -24,9 +24,9 @@ class EmployeeDetailsController < ApplicationController
     search = "%#{params[:search]}%"
 
     @employee_details = @employee_details.joins(:department).where(
-      "employee_details.name LIKE :search
-      OR employee_details.email LIKE :search
-      OR employee_details.designation LIKE :search
+      "users.name LIKE :search
+      OR users.email LIKE :search
+      OR users.designation LIKE :search
       OR departments.name LIKE :search",
       search: search
     )
@@ -56,12 +56,14 @@ class EmployeeDetailsController < ApplicationController
 
 
   def new 
-    @employee_detail = EmployeeDetail.new
+    @employee_detail = User.new
   end
 
 
   def create
-    @employee_detail = EmployeeDetail.new(employee_detail_params)
+    @employee_detail = User.new(user_details_params)
+    @employee_detail.role = :employee
+    @employee_detail.password = "pass8090"
     if @employee_detail.save
       redirect_to @employee_detail, notice: "Employee detail was successfully created."
     else
@@ -79,7 +81,7 @@ class EmployeeDetailsController < ApplicationController
 
   def update
 
-    if @employee_detail.update(employee_detail_params)
+    if @employee_detail.update(user_details_params)
       redirect_to @employee_detail, notice: "Employee detail was successfully updated."
     else
       render :edit
@@ -89,14 +91,14 @@ class EmployeeDetailsController < ApplicationController
   
   def edit
   end
-
+   
   private
 
   def set_employee
-    @employee_detail = EmployeeDetail.find(params[:id])
+    @employee_detail = User.find(params[:id])
   end
   
-  def employee_detail_params
-    params.require(:employee_detail).permit( :name, :email, :phone, :employee_id, :designation, :joining_date, :status, :department_id) 
+  def user_details_params
+    params.require(:user).permit( :name, :email, :phone, :employee_id, :designation, :joining_date, :status, :department_id ) 
   end
 end
