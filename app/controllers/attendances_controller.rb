@@ -51,6 +51,9 @@ class AttendancesController < ApplicationController
     )
 
     if @attendance.save
+      User.where(role: [:admin, :hr]).find_each do |user|
+      Notification.notify(recipient:user , notifiable: @attendance, title: "New Attendance Marked by #{current_user_detail.name}.")
+      end
       redirect_to attendances_path,
       notice: "Check-In successful."
     else
@@ -74,6 +77,9 @@ class AttendancesController < ApplicationController
     AttendanceCalculatorService.new(@attendance).call
 
     if @attendance.save
+      User.where(role: [:admin, :hr]).find_each do |user|
+      Notification.notify(recipient:user , notifiable: @attendance, title: "Attendance Updated by #{current_user_detail.name}.")
+      end
       redirect_to attendances_path,
       notice: "Check-Out successful."
     else
@@ -81,6 +87,9 @@ class AttendancesController < ApplicationController
       alert: "Something went wrong."
     end
   end
+
+
+#  all private methods are defined below
 
   private
 

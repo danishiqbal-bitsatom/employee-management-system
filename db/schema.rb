@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_06_16_214254) do
+ActiveRecord::Schema[8.1].define(version: 2026_07_08_122128) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
@@ -48,7 +48,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_16_214254) do
     t.datetime "updated_at", null: false
     t.integer "user_id"
     t.float "working_hours"
-    t.index ["attendance_date"], name: "index_attendances_on_employee_detail_and_date", unique: true
+    t.index ["user_id", "attendance_date"], name: "index_attendances_on_user_and_date", unique: true
     t.index ["user_id"], name: "index_attendances_on_user_id"
   end
 
@@ -84,6 +84,18 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_16_214254) do
     t.datetime "updated_at", null: false
     t.integer "user_id"
     t.index ["user_id"], name: "index_leave_requests_on_user_id"
+  end
+
+  create_table "notifications", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.integer "notifiable_id", null: false
+    t.string "notifiable_type", null: false
+    t.boolean "read"
+    t.integer "recipient_id", null: false
+    t.string "title"
+    t.datetime "updated_at", null: false
+    t.index ["notifiable_type", "notifiable_id"], name: "index_notifications_on_notifiable"
+    t.index ["recipient_id"], name: "index_notifications_on_recipient_id"
   end
 
   create_table "products", force: :cascade do |t|
@@ -123,6 +135,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_16_214254) do
   add_foreign_key "attendances", "users"
   add_foreign_key "employee_details", "departments"
   add_foreign_key "leave_requests", "users"
+  add_foreign_key "notifications", "users", column: "recipient_id"
   add_foreign_key "products", "users"
   add_foreign_key "users", "departments"
 end

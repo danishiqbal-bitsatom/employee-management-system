@@ -7,8 +7,8 @@ class EmployeeDetailsController < ApplicationController
 
 
   def index
-  @employee_details =  User.includes(:department).page(params[:page]).per(5)
 
+  @employee_details =  User.includes(:department).page(params[:page]).per(5)
 
   @total_employees =  User.count
 
@@ -34,19 +34,19 @@ class EmployeeDetailsController < ApplicationController
 
   # Status Filter
   if params[:status].present?
-    @employee_details = @employee_details.where(status: params[:status])
+      @employee_details = @employee_details.where(status: params[:status])
   end
 
   # Sorting
   case params[:sort]
   when "joining_date"
-    @employee_details = @employee_details.order(joining_date: :desc)
+      @employee_details = @employee_details.order(joining_date: :desc)
 
   when "department"
-    @employee_details = @employee_details.joins(:department).order("departments.name ASC") # by default it left join
+     @employee_details = @employee_details.joins(:department).order("departments.name ASC") # by default it left join
 
   else
-    @employee_details = @employee_details.order(created_at: :desc)
+      @employee_details = @employee_details.order(created_at: :desc)
   end
   end
 
@@ -64,7 +64,9 @@ class EmployeeDetailsController < ApplicationController
     @employee_detail = User.new(user_details_params)
     @employee_detail.role = :employee
     @employee_detail.password = "pass8090"
+
     if @employee_detail.save
+      Notification.notify(recipient: @employee_detail, notifiable: @employee_detail, title: "Your employee account has been created.")
       redirect_to @employee_detail, notice: "Employee detail was successfully created."
     else
       render :new
@@ -82,9 +84,9 @@ class EmployeeDetailsController < ApplicationController
   def update
 
     if @employee_detail.update(user_details_params)
-      redirect_to @employee_detail, notice: "Employee detail was successfully updated."
+        redirect_to @employee_detail, notice: "Employee detail was successfully updated."
     else
-      render :edit
+        render :edit
     end
   end
 

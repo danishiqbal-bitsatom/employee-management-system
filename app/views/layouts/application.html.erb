@@ -39,32 +39,37 @@
      <% end %>
 
       <% if user_signed_in? %>
+
       <div class="d-flex justify-content-end mt-2 me-5 dropdown show">
+
+      <span class="d-flex justify-content-end me-5">
+            <%= render 'notifications/bell' %>
+      </span>
 
         <a class="btn btn-secondary rounded-pill dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           <%= current_user.name %>
         </a>
         <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuLink">
-          <% if  user_signed_in? && current_user.admin? %>
-            <div class="badge bg-danger fs-6 dropdown-item">
-               Admin
-            </div>
+            <% if  user_signed_in? && current_user.admin? %>
+              <div class="badge bg-danger fs-6 dropdown-item">
+                 Admin
+              </div>
 
-          <% elsif user_signed_in? && current_user.hr? %>
-            <div class="badge bg-warning text-dark fs-6 dropdown-item">
-              👨‍💼 HR
-            </div>
+            <% elsif user_signed_in? && current_user.hr? %>
+               <div class="badge bg-warning text-dark fs-6 dropdown-item">
+                 👨‍💼 HR
+               </div>
 
-          <% else %>
-            <div class="badge bg-dark text-white fs-6   dropdown-item">
-            👤Employee
+            <% else %>
+                <div class="badge bg-dark text-white fs-6   dropdown-item">
+                👤Employee
+                </div>
+            <% end %>
+            <div class="dropdown-divider"></div>
+                <%= link_to "Profile", profile_path, class: "btn btn-outline-primary btn-md rounded-pill dropdown-item" %>
+                <%= button_to "Logout", destroy_user_session_path, method: :delete, class: "btn btn-outline-danger btn-md rounded-pill dropdown-item"  %>
             </div>
-          <% end %>
-          <div class="dropdown-divider"></div>
-           <%= link_to "Profile", profile_path, class: "btn btn-outline-primary btn-md rounded-pill dropdown-item" %>
-          <%= button_to "Logout", destroy_user_session_path, method: :delete, class: "btn btn-outline-danger btn-md rounded-pill dropdown-item"  %>
-          </div>
-      </div>
+        </div>
       <% end %>
 
       

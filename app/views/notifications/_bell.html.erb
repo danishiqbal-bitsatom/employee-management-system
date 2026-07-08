@@ -1,0 +1,99 @@
+<% if user_signed_in? %>
+  <% unread_count = current_user.notifications.where(read: false).count %>
+  <%= link_to notifications_path, 
+      class: "notifications-bell",
+      aria_label: "Notifications#{unread_count > 0 ? " - #{unread_count} unread" : ""}",
+      title: "View notifications",
+      data: { notification_count: unread_count } do %>
+    <svg class="notifications-bell__icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+      <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+      <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+    </svg>
+    <% if unread_count > 0 %>
+      <span class="notifications-bell__badge" aria-live="polite" aria-atomic="true">
+        <%= unread_count > 99 ? "99+" : unread_count %>
+      </span>
+    <% end %>
+  <% end %>
+<% end %>
+
+<style>
+  .notifications-bell {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    color: #6b7280;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    border-radius: 50%;
+  }
+
+  .notifications-bell:hover {
+    color: #1f2937;
+    background-color: #f3f4f6;
+  }
+
+  .notifications-bell:active {
+    transform: scale(0.95);
+  }
+
+  .notifications-bell__icon {
+    width: 24px;
+    height: 24px;
+    transition: all 0.2s ease;
+  }
+
+  .notifications-bell:hover .notifications-bell__icon {
+    color: #2563eb;
+  }
+
+  .notifications-bell__badge {
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    min-width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    color: white;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 0 4px;
+    border-radius: 10px;
+    border: 2px solid white;
+    box-shadow: 0 2px 8px rgba(239, 68, 68, 0.4);
+    animation: pulse-badge 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    letter-spacing: 0.5px;
+  }
+
+  @keyframes pulse-badge {
+    0%, 100% {
+      opacity: 1;
+      box-shadow: 0 2px 8px rgba(239, 68, 68, 0.4);
+    }
+    50% {
+      opacity: 0.85;
+      box-shadow: 0 2px 12px rgba(239, 68, 68, 0.6);
+    }
+  }
+
+  @media (max-width: 640px) {
+    .notifications-bell {
+      width: 36px;
+      height: 36px;
+    }
+
+    .notifications-bell__badge {
+      min-width: 18px;
+      height: 18px;
+      font-size: 10px;
+      top: -4px;
+      right: -4px;
+    }
+  }
+</style>

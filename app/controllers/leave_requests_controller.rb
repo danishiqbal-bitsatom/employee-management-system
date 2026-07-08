@@ -28,6 +28,9 @@ class LeaveRequestsController < ApplicationController
   def create
     @leave_request = current_user_detail.leave_requests.new(leave_request_params)
     if @leave_request.save
+      User.where(role: [:admin, :hr]).find_each do |user|
+      Notification.notify(recipient:user , notifiable: @leave_request, title: "New Leave Request Created by #{current_user_detail.name}.")
+      end
       redirect_to leave_requests_path, notice: 'Leave request was successfully created.'
     else
       render :new
@@ -63,6 +66,7 @@ class LeaveRequestsController < ApplicationController
 
       DeductLeaveBalanceJob.perform_later(@leave_request.id)
       LeaveApprovedJob.perform_later(@leave_request.id)
+      Notification.notify(recipient: @leave_request.user, notifiable: @leave_request, title: "Your leave request has been approved.")
       
       redirect_to leave_requests_path, notice: 'Leave request approved.'
     else
