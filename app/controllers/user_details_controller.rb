@@ -27,7 +27,7 @@ class UserDetailsController < ApplicationController
   @employee_details = @employee_details.filter_by_status(params[:status])
   @employee_details = @employee_details.sorted(params[:sort])
 
-end
+  end
 
 
   def show 
@@ -48,6 +48,7 @@ end
   def create
     @employee_detail = User.new(user_details_params)
     if @employee_detail.save
+      ActivityLogger.log_activity(user:current_user, action: "create", record: @employee_detail, description: "Created employee #{@employee_detail.name} by #{current_user.name}", ip_address: request.remote_ip)
       WelcomeEmailJob.perform_later(@employee_detail)
       redirect_to user_detail_path(@employee_detail), notice: "Employee detail was successfully created."
     else
@@ -59,6 +60,7 @@ end
   def destroy
     # byebug
     @employee_detail.destroy 
+    ActivityLogger.log_activity(user:current_user, action: "destroy", record: @employee_detail, description: "Deleted employee #{@employee_detail.name} by #{current_user.name}", ip_address: request.remote_ip)
 
     redirect_to user_details_path , notice: "Employee detail was successfully deleted."
 
@@ -68,6 +70,7 @@ end
   def update
 
     if @employee_detail.update(user_details_params)
+      ActivityLogger.log_activity(user:current_user, action: "update", record: @employee_detail, description: "Updated employee #{@employee_detail.name} by #{current_user.name}", ip_address: request.remote_ip)
       redirect_to user_detail_path(@employee_detail), notice: "Employee detail was successfully updated."
     else
       render :edit

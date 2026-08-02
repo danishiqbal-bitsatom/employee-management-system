@@ -15,9 +15,11 @@ class Users::SessionsController < Devise::SessionsController
   end
 
   # POST /resource/sign_in
-  # def create
-  #   super
-  # end
+  def create
+    super do |user|
+      ActivityLogger.log_activity(user: user, action: "login", record: user, description: "User #{user.name} logged in", ip_address: request.remote_ip)
+    end
+  end
 
   # DELETE /resource/sign_out
   # def destroy

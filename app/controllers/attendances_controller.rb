@@ -89,7 +89,7 @@ class AttendancesController < ApplicationController
   end
 
 
-#  all private methods are defined below
+#  all private methods 
 
   private
 

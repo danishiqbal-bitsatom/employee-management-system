@@ -77,3 +77,5 @@ gem "cancancan"
 gem "byebug"
 
 gem "jwt"
+
+gem "paper_trail"

@@ -1,6 +1,7 @@
 class User < ApplicationRecord
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
+
   devise :database_authenticatable, :registerable,:recoverable, :rememberable, :validatable,:timeoutable 
   validates :name, presence: true
   validates :email, presence: true, uniqueness: true
@@ -19,9 +20,13 @@ class User < ApplicationRecord
   belongs_to :department
   has_many :attendances, dependent: :destroy
   has_many :leave_requests, dependent: :destroy
+
   before_validation  :generate_Password , on: :create
   after_create_commit :assign_initial_leaves
 
+  has_paper_trail
+
+  has_many :activity_logs, dependent: :destroy
 
    enum :role, {
     employee: 0,

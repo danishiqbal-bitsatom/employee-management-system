@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  get "activity_logs/index"
   get "notifications/index"
   get "departments/index"
   get "departments/new"
@@ -63,6 +64,7 @@ Rails.application.routes.draw do
   # resources :profiles, only: [:show]
 
   resources :notifications, only: [:index]
+  resources :activity_logs, only: [:index]
 
 
 

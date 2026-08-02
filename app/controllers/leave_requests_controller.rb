@@ -77,6 +77,7 @@ class LeaveRequestsController < ApplicationController
   
   def reject
     if @leave_request.update(status: "rejected")
+      Notification.notify(recipient: @leave_request.user, notifiable: @leave_request, title: "Your leave request has been rejected.")
       redirect_to leave_requests_path, notice: 'Leave request rejected.'
     else
       redirect_to leave_requests_path, alert: 'Failed to reject leave request.'
